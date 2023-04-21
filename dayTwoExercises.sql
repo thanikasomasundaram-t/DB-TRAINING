@@ -1,41 +1,17 @@
 -- 1. Write a SQL query to remove the details of an employee whose first name ends in ‘even’ 
-SELECT *  FROM EMPLOYEES WHERE substr(lower(EMPLOYEES.FIRST_NAME), -4, 4) = 'even';
 DELETE FROM EMPLOYEES WHERE substr(lower(EMPLOYEES.FIRST_NAME), -4, 4) = 'even';
-
-INSERT INTO employees
-VALUES (
-	100,
-	'Steven',
-	'King',
-	'SKING',
-	'515.123.4567',
-	DATE('17-JUN-1987'),
-	'AD_PRES',
-	24000,
-	NULL,
-	NULL,
-	90
-	);
-
-SELECT * FROM EMPLOYEES;
+-- ANOTHER APPROACH
+-- DELETE FROM EMPLOYEES WHERE lower(FIRST_NAME) LIKE '%even';
 
 -- 2. Write a query in SQL to show the three minimum values of the salary from the table.
 SELECT * FROM EMPLOYEES ORDER BY SALARY LIMIT 3;
 
 -- 3. Write a SQL query to remove the employees table from the database 
--- DROP TABLE EMPLOYEES;
+DROP TABLE EMPLOYEES;
 
 -- 4. Write a SQL query to copy the details of this table into a new table with table name as Employee table and to delete the records in employees table 
--- -- SELECT * INTO EMPLOYEE FROM EMPLOYEES;
--- CREATE TABLE COPYEMPLOYEES LIKE EMPLOYEES;
--- INSERT INTO COPYEMPLOYEES SELECT * FROM EMPLOYEES;
--- SELECT * FROM COPYEMPLOYEES;
-
--- DROP TABLE COPYEMPLOYEES;
-
 CREATE TABLE COPYEMPLOYEES AS SELECT * FROM EMPLOYEES;
 SELECT * FROM COPYEMPLOYEES;
--- DROP TABLE EMPLOYEES;
 
 
 
@@ -89,10 +65,6 @@ SELECT COPYEMPLOYEES.EMPLOYEE_ID, COPYEMPLOYEES.JOB_ID, JOB_TITLE FROM JOBS, COP
 UNION
 SELECT EMPLOYEE_ID, JOB_HISTORY.JOB_ID, JOB_TITLE FROM JOB_HISTORY, JOBS WHERE JOBS.JOB_ID = JOB_HISTORY.JOB_ID ORDER BY EMPLOYEE_ID;
 
--- SELECT DISTINCT JOB_ID FROM COPYEMPLOYEES;
--- SELECT * FROM JOB_HISTORY ORDER BY EMPLOYEE_ID;
--- SELECT * FROM JOBS;
-
 -- 16. Display Employee first name and date joined as WeekDay, Month Day, Year
 -- Eg : 
 -- Emp ID      Date Joined
@@ -102,14 +74,14 @@ SELECT FIRST_NAME, concat(TO_CHAR((HIRE_DATE),'MMMM'), ', ', monthname(HIRE_DATE
 
 -- 17. The company holds a new job opening for Data Engineer (DT_ENGG) with a minimum salary of 12,000 and maximum salary of 30,000 .   The job position might be removed based on market trends (so, save the changes) .   - Later, update the maximum salary to 40,000 .  - Save the entries as well.
 -- -  Now, revert back the changes to the initial state, where the salary was 30,000
+begin transaction;
 ALTER SESSION SET AUTOCOMMIT = FALSE;
 INSERT INTO JOBS VALUES('DT_ENGG', 'DATA ENGINEER', 12000, 30000);
 UPDATE JOBS SET MAX_SALARY = 40000 WHERE JOB_ID = 'DT_ENGG';
+-- savepoint a;
 UPDATE JOBS SET MAX_SALARY = 50000 WHERE JOB_ID = 'DT_ENGG';
 DELETE FROM JOBS WHERE JOB_ID = 'DT_ENGG';
-ROLLBACK A;
-SELECT * FROM JOBS;
-COMMIT;
+ROLLBACK;
 
 -- 18. Find the average salary of all the employees who got hired after 8th January 1996 but before 1st January 2000 and round the result to 3 decimals 
 
@@ -128,22 +100,6 @@ SELECT REGION_NAME FROM REGIONS
 UNION SELECT 'Australia'
 UNION SELECT 'Antarctica'
 UNION SELECT 'Europe';
-
-
--- SELECT PHONE_NUMBER, left(PHONE_NUMBER,(length(PHONE_NUMBER) - charindex('.', reverse(PHONE_NUMBER), 1))), right(PHONE_NUMBER, charindex('.', reverse(PHONE_NUMBER), 1)-1) AS PHONE FROM COPYEMPLOYEES;
-
--- select TO_CHAR((HIRE_DATE),'MMMM') FROM COPYEMPLOYEES;
-
-
-BEGIN TRANSACTIONS;
-ALTER SESSION SET AUTOCOMMIT = FALSE;
-INSERT INTO JOBS VALUES('DT_ENGG', 'DATA ENGINEER', 12000, 30000);
-UPDATE JOBS SET MAX_SALARY = 40000 WHERE JOB_ID = 'DT_ENGG';
-UPDATE JOBS SET MAX_SALARY = 50000 WHERE JOB_ID = 'DT_ENGG';
-DELETE FROM JOBS WHERE JOB_ID = 'DT_ENGG';
-ROLLBACK A;
-SELECT * FROM JOBS;
-COMMIT;
 
 
 
